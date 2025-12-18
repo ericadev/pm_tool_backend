@@ -1,5 +1,9 @@
 # PM Tool - Backend API
 
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
+</p>
+
 NestJS-based REST API for the Project Management Tool. Provides authentication, project management, task tracking, and team collaboration features.
 
 ## Tech Stack
@@ -11,6 +15,8 @@ NestJS-based REST API for the Project Management Tool. Provides authentication, 
 - **ORM**: Prisma
 - **Authentication**: JWT (JSON Web Tokens)
 - **Real-time**: Socket.io (planned for Milestone 3+)
+- **Testing**: Jest
+- **Code Quality**: ESLint, Prettier
 
 ## Prerequisites
 
@@ -28,29 +34,31 @@ src/
 ├── tasks/             # Task management module
 ├── tags/              # Tags and filtering module
 ├── common/            # Shared utilities, guards, decorators
-├── database/          # Database configuration and migrations
+├── app.controller.ts  # Main app controller
+├── app.module.ts      # Main app module
+├── app.service.ts     # Main app service
 └── main.ts            # Application entry point
+
+prisma/
+├── schema.prisma      # Database schema definition
+└── migrations/        # Database migration files
+
+test/
+├── app.e2e-spec.ts    # End-to-end tests
+└── jest-e2e.json      # Jest E2E config
 ```
 
-## Setup Instructions
-
-> **Note**: This is a basic structure. Follow these steps to initialize:
+## Installation & Setup
 
 ### 1. Install Dependencies
 
+Dependencies have already been installed. To reinstall:
+
 ```bash
-cd backend
 npm install
 ```
 
-### 2. Install NestJS CLI (Optional but Recommended)
-
-```bash
-npm install -g @nestjs/cli
-# or use via npx: npx nest
-```
-
-### 3. Environment Configuration
+### 2. Environment Configuration
 
 Create a `.env` file in the backend root:
 
@@ -72,7 +80,7 @@ PORT=3000
 NODE_ENV=development
 ```
 
-### 4. Database Setup
+### 3. Database Setup
 
 Create PostgreSQL database:
 
@@ -80,7 +88,13 @@ Create PostgreSQL database:
 createdb pm_tool_dev
 ```
 
-### 5. Prisma Setup
+### 4. Prisma Configuration
+
+Install Prisma dependencies:
+
+```bash
+npm install @prisma/client prisma
+```
 
 Initialize Prisma (if not already done):
 
@@ -94,7 +108,7 @@ Generate Prisma client:
 npx prisma generate
 ```
 
-### 6. Run Migrations
+### 5. Run Migrations
 
 After defining schema in `prisma/schema.prisma`:
 
@@ -102,26 +116,58 @@ After defining schema in `prisma/schema.prisma`:
 npx prisma migrate dev --name init
 ```
 
-### 7. Start Development Server
+## Compile and Run the Project
 
 ```bash
 # Development with hot reload
 npm run start:dev
+
+# Development
+npm run start
 
 # Production
 npm run build
 npm run start:prod
 ```
 
-## Development Workflow
+Application will run on `http://localhost:3000`
 
-This project follows the feature branch workflow. See [CLAUDE.md](./CLAUDE.md) for detailed git guidelines.
+## Running Tests
 
-**Key Rules:**
-- Never commit directly to `main`
-- Use feature branches: `git checkout -b feature/your-feature`
-- Write descriptive commit messages
-- Keep branches focused and short-lived
+```bash
+# Unit tests
+npm run test
+
+# Test coverage
+npm run test:cov
+
+# E2E tests
+npm run test:e2e
+```
+
+## Development Scripts
+
+```bash
+# Development
+npm run start:dev        # Start with hot reload
+npm run start            # Start without hot reload
+npm run build            # Build for production
+npm run start:prod       # Start production build
+
+# Code Quality
+npm run lint             # Run ESLint
+npm run format           # Format with Prettier
+
+# Testing
+npm run test             # Run Jest unit tests
+npm run test:watch       # Run tests in watch mode
+npm run test:cov         # Generate coverage report
+npm run test:e2e         # Run E2E tests
+
+# Prisma
+npm run prisma:studio    # Open Prisma Studio GUI
+npm run prisma:gen       # Generate Prisma client
+```
 
 ## API Documentation
 
@@ -129,17 +175,21 @@ Full API specification and endpoints are documented in [../../TODO.md](../../TOD
 
 ### Key Endpoints (Planned)
 
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `GET /users/:id` - Get user profile
-- `POST /projects` - Create project
-- `GET /projects` - List user projects
-- `GET /projects/:id/tasks` - List project tasks
-- `POST /tasks` - Create task
-- `PATCH /tasks/:id` - Update task
-- `DELETE /tasks/:id` - Delete task
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/profile` - Get current user profile
+- `POST /api/projects` - Create project
+- `GET /api/projects` - List user projects
+- `GET /api/projects/:id` - Get project details
+- `PATCH /api/projects/:id` - Update project
+- `DELETE /api/projects/:id` - Delete project
+- `GET /api/projects/:id/tasks` - List project tasks
+- `POST /api/tasks` - Create task
+- `GET /api/tasks/:id` - Get task details
+- `PATCH /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
 
-See TODO.md for complete endpoint specifications.
+See [../../TODO.md](../../TODO.md) for complete endpoint specifications.
 
 ## Database Schema
 
@@ -156,54 +206,15 @@ The database schema is defined using Prisma ORM in `prisma/schema.prisma`.
 
 See `prisma/schema.prisma` for full schema definition.
 
-## Scripts
+## Development Workflow
 
-```bash
-# Development
-npm run start:dev        # Start with hot reload
-npm run build            # Build for production
-npm run start:prod       # Start production build
+This project follows the feature branch workflow. See [CLAUDE.md](./CLAUDE.md) for detailed git guidelines.
 
-# Database
-npm run db:migrate       # Run migrations
-npm run db:seed          # Seed database (if available)
-npm run db:reset         # Reset database (dev only)
-
-# Code Quality
-npm run lint             # Run ESLint
-npm run format           # Format with Prettier
-npm run test             # Run Jest tests
-npm run test:cov         # Run tests with coverage
-
-# Prisma
-npm run prisma:studio    # Open Prisma Studio GUI
-npm run prisma:gen       # Generate Prisma client
-```
-
-## Testing
-
-```bash
-# Run all tests
-npm test
-
-# Run tests in watch mode
-npm test:watch
-
-# Generate coverage report
-npm test:cov
-```
-
-## Deployment
-
-Deployment instructions and environment configuration will be available in the documentation once the project reaches the appropriate milestone.
-
-## Contributing
-
-See [CLAUDE.md](./CLAUDE.md) for the complete development workflow and branch strategy.
-
-## Project Roadmap
-
-See [../../TODO.md](../../TODO.md) for the complete 4-milestone roadmap with detailed task breakdown.
+**Key Rules:**
+- Never commit directly to `main`
+- Use feature branches: `git checkout -b feature/your-feature`
+- Write descriptive commit messages
+- Keep branches focused and short-lived
 
 ## Troubleshooting
 
@@ -215,6 +226,9 @@ psql --version
 
 # Test connection
 psql -U postgres -h localhost
+
+# Check current DATABASE_URL
+echo $DATABASE_URL
 ```
 
 ### Prisma Issues
@@ -228,10 +242,56 @@ npx prisma generate
 
 # View database state
 npx prisma studio
+
+# View pending migrations
+npx prisma migrate status
 ```
+
+### Port Already in Use
+
+```bash
+# Kill process on port 3000 (macOS/Linux)
+lsof -ti:3000 | xargs kill -9
+
+# Or configure different port in .env
+PORT=3001
+```
+
+### NestJS Issues
+
+```bash
+# Clear NestJS cache
+rm -rf dist/
+
+# Rebuild
+npm run build
+
+# Check TypeScript errors
+npm run build -- --watch
+```
+
+## Contributing
+
+See [CLAUDE.md](./CLAUDE.md) for the complete development workflow and branch strategy.
+
+## Project Roadmap
+
+See [../../TODO.md](../../TODO.md) for the complete 4-milestone roadmap with detailed task breakdown.
+
+## Resources
+
+- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework
+- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy)
+- Prisma Documentation: https://www.prisma.io/docs
+- JWT Authentication: https://github.com/nestjs/jwt
+
+## Support
+
+Nest is a MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
 ## Questions?
 
 - Check the development workflow in [CLAUDE.md](./CLAUDE.md)
 - Review the project roadmap in [../../TODO.md](../../TODO.md)
 - See recent commits for implementation patterns: `git log --oneline`
+- Check [NestJS docs](https://docs.nestjs.com/) for framework-specific questions
