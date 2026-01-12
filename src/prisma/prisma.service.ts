@@ -1,5 +1,10 @@
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
-import { PrismaClient } from '../generated';
+import { PrismaClient } from '../generated/client';
+import { PrismaPg } from '@prisma/adapter-pg'; // Import your adapter
+
+const connectionString = process.env.DATABASE_URL;
+const adapter = new PrismaPg(connectionString); // Create adapter instance
+
 
 @Injectable()
 export class PrismaService implements OnModuleInit, OnModuleDestroy {
@@ -8,8 +13,8 @@ export class PrismaService implements OnModuleInit, OnModuleDestroy {
 
   constructor() {
     // Get the Prisma Client class and instantiate it
-    const { PrismaClient: PC } = require('../generated/client');
-    this.client = new PC();
+    const PC = PrismaClient as any;
+    this.client = new PC({ adapter });
   }
 
   async onModuleInit() {
